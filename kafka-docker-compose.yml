@@ -1,0 +1,112 @@
+version: '3.7'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:${CONFLUENT_PLATFORM_VERSION:-5.3.1}
+    ports:
+    - "127.0.0.01:2181:2181"
+    healthcheck:
+      test: echo stat | nc localhost 2181
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    environment:
+    - ZOOKEEPER_SERVER_ID=1
+    - ZOOKEEPER_CLIENT_PORT=2181
+    - ZOOKEEPER_TICK_TIME=2000
+    - ZOOKEEPER_INIT_LIMIT=5
+    - ZOOKEEPER_SYNC_LIMIT=2
+    - ZOOKEEPER_SERVERS=zookeeper:2888:3888
+    - ZOOKEEPER_LOG4J_ROOT_LOGLEVEL=ERROR
+  host01:
+    image: confluentinc/cp-kafka:${CONFLUENT_PLATFORM_VERSION:-5.3.1}
+    healthcheck:
+      test: nc -z localhost 9091
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    depends_on:
+    - zookeeper
+    ports:
+    - "127.0.0.01:9091:9091"
+    environment:
+    - KAFKA_BROKER_ID=1
+    - KAFKA_ADVERTISED_LISTENERS=internal://host01:9000,external://host01:9091
+    - KAFKA_LISTENERS=internal://0.0.0.0:9000,external://0.0.0.0:9091
+    - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+    - KAFKA_HEAP_OPTS=-Xmx512M -Xms512M
+    - ZOOKEEPER=zookeeper:2181
+    - KAFKA_INTER_BROKER_LISTENER_NAME=internal
+    - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=internal:PLAINTEXT,external:PLAINTEXT
+    - KAFKA_LOG4J_ROOT_LOGLEVEL=WARN
+    - KAFKA_NUM_PARTITIONS=1
+    - KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS=3
+    - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=2
+    - KAFKA_MIN_INSYNC_REPLICAS=2
+    - KAFKA_LOG_CLEANER_THREADS=2
+    - KAFKA_AUTO_CREATE_TOPICS_ENABLE=false
+    - KAFKA_AUTO_LEADER_REBALANCE_ENABLE=false
+    - KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE=false
+    - KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE=false
+    - KAFKA_LOG4J_LOGGERS="kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+  host02:
+    image: confluentinc/cp-kafka:${CONFLUENT_PLATFORM_VERSION:-5.3.1}
+    healthcheck:
+      test: nc -z localhost 9091
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    depends_on:
+    - zookeeper
+    ports:
+    - "127.0.0.02:9091:9091"
+    environment:
+    - KAFKA_BROKER_ID=2
+    - KAFKA_ADVERTISED_LISTENERS=internal://host02:9000,external://host02:9091
+    - KAFKA_LISTENERS=internal://0.0.0.0:9000,external://0.0.0.0:9091
+    - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+    - KAFKA_HEAP_OPTS=-Xmx512M -Xms512M
+    - ZOOKEEPER=zookeeper:2181
+    - KAFKA_INTER_BROKER_LISTENER_NAME=internal
+    - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=internal:PLAINTEXT,external:PLAINTEXT
+    - KAFKA_LOG4J_ROOT_LOGLEVEL=WARN
+    - KAFKA_NUM_PARTITIONS=1
+    - KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS=3
+    - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=2
+    - KAFKA_MIN_INSYNC_REPLICAS=2
+    - KAFKA_LOG_CLEANER_THREADS=2
+    - KAFKA_AUTO_CREATE_TOPICS_ENABLE=false
+    - KAFKA_AUTO_LEADER_REBALANCE_ENABLE=false
+    - KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE=false
+    - KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE=false
+    - KAFKA_LOG4J_LOGGERS="kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+  host03:
+    image: confluentinc/cp-kafka:${CONFLUENT_PLATFORM_VERSION:-5.3.1}
+    healthcheck:
+      test: nc -z localhost 9091
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    depends_on:
+    - zookeeper
+    ports:
+    - "127.0.0.03:9091:9091"
+    environment:
+    - KAFKA_BROKER_ID=3
+    - KAFKA_ADVERTISED_LISTENERS=internal://host03:9000,external://host03:9091
+    - KAFKA_LISTENERS=internal://0.0.0.0:9000,external://0.0.0.0:9091
+    - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+    - KAFKA_HEAP_OPTS=-Xmx512M -Xms512M
+    - ZOOKEEPER=zookeeper:2181
+    - KAFKA_INTER_BROKER_LISTENER_NAME=internal
+    - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=internal:PLAINTEXT,external:PLAINTEXT
+    - KAFKA_LOG4J_ROOT_LOGLEVEL=WARN
+    - KAFKA_NUM_PARTITIONS=1
+    - KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS=3
+    - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=2
+    - KAFKA_MIN_INSYNC_REPLICAS=2
+    - KAFKA_LOG_CLEANER_THREADS=2
+    - KAFKA_AUTO_CREATE_TOPICS_ENABLE=false
+    - KAFKA_AUTO_LEADER_REBALANCE_ENABLE=false
+    - KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE=false
+    - KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE=false
+    - KAFKA_LOG4J_LOGGERS="kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
